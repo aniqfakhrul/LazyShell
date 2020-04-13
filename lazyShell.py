@@ -21,7 +21,7 @@ parser.add_argument("-i", "--interface", type=str, help="Interface", dest='inter
 parser.add_argument("-p", "--port", type=int, help="Port number", dest='portnum')
 parser.add_argument("-t", "--type", type=str, help="Type of the reverse shell to generate", dest='type')
 parser.add_argument("-l", "--list", action="store_true", help="List all available shell types", dest='list')
-parser.add_argument("-v", "--verbose", action="store_true", help="verbose mode", dest='verbose')
+parser.add_argument("-v", "--verbose", action="store_true", help="Verbose mode", dest='verbose')
 parser.add_argument("-a", "--all", action="store_true", help="Generate all the shells", dest='all')
 
 # got this from here https://stackoverflow.com/a/47440202
@@ -73,21 +73,20 @@ if args.interface or args.portnum != None:
        ip = ni.ifaddresses(args.interface)[ni.AF_INET][0]['addr']
     else:
        time.sleep(0.5)
-       print ('\033[1m'+'\033[93m'+"[*] "+'\033[0m'+"Using default ip instead, please enter --interface")
+       print ('\033[1m'+'\033[93m'+"[*] "+'\033[0m'+"Using default ip instead")
        ip = '127.0.0.1'
        time.sleep(1)
     if args.portnum != None:
        port = args.portnum
     else:
        time.sleep(0.5)
-       print ('\033[1m'+'\033[93m'+"[*] "+'\033[0m'+"Using default port instead, please enter --port")
+       print ('\033[1m'+'\033[93m'+"[*] "+'\033[0m'+"Using default port instead")
        port = 1234
 else:
     time.sleep(0.2)
-    print ('\033[1m'+'\033[93m'+"[*] "+'\033[0m'+"Using default ip and port instead, please enter --interface --port")
+    print ('\033[1m'+'\033[93m'+"[*] "+'\033[0m'+"Using default ip and port instead")
     ip = '127.0.0.1'
     port = 1234
-    time.sleep(1)
 
 if args.type: 
     time.sleep(1)
@@ -111,6 +110,6 @@ if args.all:
             print('\n' + x.format(ip, port))
 
 if not args.verbose:
-    time.sleep(1)
-    print('\033[1m'+'\033[92m'+"[*] "+'\033[0m' +"Starting the listener on "+str(ip)+":"+str(port)+"...")
-    os.system('nc -lvnp '+ str(port))
+       time.sleep(1)
+       print('\033[1m'+'\033[92m'+"[*] "+'\033[0m' +"Starting the listener on "+str(ip)+":"+str(port)+"...")
+       os.system('nc -lvnp '+ str(port))
