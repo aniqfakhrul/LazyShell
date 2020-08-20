@@ -80,5 +80,6 @@ if args.type:
             if k == args.type:
                 x = base64.b64decode(i).decode('utf-8')
                 print('=> '+'\033[1m'+ x.format(ip, port)+'\033[0m')
-                print('\n\033[1m'+'\033[92m'+"[*] "+'\033[0m' +"Starting the listener on "+str(ip)+":"+str(port)+"...")
-                os.system('nc -lnp '+ str(port))
+
+print('\n\033[1m'+'\033[92m'+"[*] "+'\033[0m' +"Starting the listener on "+str(ip)+":"+str(port)+"...")
+os.system('nc -lnp '+ str(port))
